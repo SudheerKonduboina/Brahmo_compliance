@@ -71,38 +71,74 @@
 
 ## 🖼️ Product Showcase
 
-> **Note:** To add your own screenshots, run the project locally, take screenshots of the specific pages, and place them in the `public/screenshots` folder.
+### 🎭 Role-Based Dashboard Views
 
-| Feature | Screenshot |
-|:---:|:---:|
-| **Partner Overview Dashboard** | *![Dashboard Placeholder](public/screenshots/dashboard.png)* |
-| **Ethical Walls (Associate View)** | *![Associate View Placeholder](public/screenshots/associate-view.png)* |
-| **Immutable Audit Trail** | *![Audit Trail Placeholder](public/screenshots/audit-trail.png)* |
-| **Review Queue** | *![Review Queue Placeholder](public/screenshots/review-queue.png)* |
-| **Regulator Export** | *![Export Placeholder](public/screenshots/export.png)* |
+The platform enforces strict UI & Data separation based on user role and assigned matters.
+
+| User Role | View | Screenshot |
+|:---:|:---:|:---:|
+| **Partner (Sarah)** | Overview Dashboard | ![Sarah Overview](images/sarah/Screenshot%202026-05-24%20224508.png) |
+| **Partner (Sarah)** | AI Session Review Queue | ![Sarah Review](images/sarah/Screenshot%202026-05-24%20224528.png) |
+| **Partner (Sarah)** | Blocked Access Logs | ![Sarah Blocked](images/sarah/Screenshot%202026-05-24%20224550.png) |
+| **Partner (Sarah)** | Immutable Audit Trail | ![Sarah Audit](images/sarah/Screenshot%202026-05-24%20224608.png) |
+| **Partner (Sarah)** | Compliance CSV Export | ![Sarah Export](images/sarah/Screenshot%202026-05-24%20224639.png) |
+| **Associate (Priya)** | Assigned Matters | ![Priya Matters](images/priya/Screenshot%202026-05-24%20224705.png) |
+| **Associate (Priya)** | AI Sessions | ![Priya Sessions](images/priya/Screenshot%202026-05-24%20224721.png) |
+| **Associate (Rahul)** | Assigned Matters | ![Rahul Matters](images/rahul/Screenshot%202026-05-24%20224740.png) |
+| **Associate (Sonia)** | Overview | ![Sonia Overview](images/sonia/Screenshot%202026-05-24%20224756.png) |
 
 ---
 
-## 🏛️ Architecture & Security Model
+## 🏛️ Architecture & System Design
+
+### High-Level Component Diagram
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│                    NEXT.JS APPLICATION                       │
-├──────────────────────────┬──────────────────────────────────┤
-│    Frontend (Client)     │       Backend API Routes          │
-│  ┌──────────────────┐    │  ┌────────────────────────────┐  │
-│  │  React Components │    │  │  /api/export (JWT Auth)    │  │
-│  │  Auth Context     │────┼──│  /api/review (RBAC Guard)  │  │
-│  │  Web Crypto Hash  │    │  │  Server-Side Supabase      │  │
-│  └──────────────────┘    │  └────────────────────────────┘  │
-├──────────────────────────┴──────────────────────────────────┤
-│               SUPABASE (POSTGRESQL 16)                     │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  ► Row Level Security (RLS) Policy Engine            │  │
-│  │  ► Append-Only Constraints (No UPDATE/DELETE)        │  │
-│  │  ► JWT Claim Parsing (role matching)                 │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          NEXT.JS FRONTEND                                │
+├──────────────────────────┬──────────────────────────────────────────────┤
+│      UI Components       │             Security Handlers                 │
+│  ┌──────────────────┐    │  ┌──────────────────────────────────────┐     │
+│  │ Dashboard Panels │    │  │  Client-Side Role Guards             │     │
+│  │ Review Queue UI  │────┼──│  Web Crypto API (SHA-256 Hashing)    │     │
+│  │ CSV Export UI    │    │  │  JWT Token Management                │     │
+│  └──────────────────┘    │  └──────────────────────────────────────┘     │
+├──────────────────────────┴──────────────────────────────────────────────┤
+│                         NEXT.JS API ROUTES                              │
+│  ┌──────────────────────────────────────────────────────────────────┐   │
+│  │  /api/export: Decodes JWT header, validates 'partner' role,      │   │
+│  │               generates anonymized client CSV, forces dynamic.   │   │
+│  │  /api/review: Validates 'partner' role, records decision.        │   │
+│  └──────────────────────────────────────────────────────────────────┘   │
+├─────────────────────────────────────────────────────────────────────────┤
+│                     SUPABASE (POSTGRESQL 16)                            │
+│  ┌──────────────────────────────────────────────────────────────────┐   │
+│  │ 1. Ethical Walls: RLS `matter_permissions` checking JWT claims   │   │
+│  │ 2. Audit Trail: `GRANT INSERT` only (Append-Only Log)            │   │
+│  │ 3. Breach Log: `blocked_access_log` catches unauthorized queries │   │
+│  └──────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### System Design Highlights
+
+#### 1. Authorization Flow
+```text
+Request → JWT Extraction → Supabase RLS Evaluation 
+  → If User == Partner: Grant Global SELECT 
+  → If User == Associate: Join `matter_permissions` → Grant/Deny
+```
+
+#### 2. Immutable Hash Chain (Tamper-Proofing)
+```text
+AI Output → Client Browser (SubtleCrypto SHA-256) → Hash Generated
+  → Sent to Supabase → RLS Enforces Append-Only (No Updates/Deletes)
+```
+
+#### 3. Data Export Anonymization
+```text
+Raw DB Pull → Map Client UUID to "Client A", "Client B"
+  → Truncate User UUIDs → Strip Output Content → Generate CSV Stream
 ```
 
 ---
@@ -163,7 +199,7 @@ To set up the initial schema, RLS policies, and test data, run the provided SQL 
 
 <div align="center">
   <a href="https://www.linkedin.com/in/sudheerkonduboina/">
-    <img src="public/sudheer.png" width="120" style="border-radius: 50%;" alt="Sudheer Konduboina" />
+    <img src="images/developer/IMG_24052026.png" width="120" style="border-radius: 50%;" alt="Sudheer Konduboina" />
   </a>
   <br/>
   <h3>Sudheer Konduboina</h3>
