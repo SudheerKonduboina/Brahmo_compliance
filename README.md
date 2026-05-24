@@ -5,7 +5,7 @@
 <h1 align="center">⚖️ BRAHMO Compliance Engine</h1>
 
 <p align="center">
-  <strong>An enterprise-grade legal compliance platform with database-level Row Level Security & Immutable Audit Trails.</strong>
+  <strong>Backend Compliance Engine with Supabase RLS + audit system</strong>
 </p>
 
 <p align="center">
@@ -23,6 +23,21 @@
   <img src="https://img.shields.io/badge/auth-JWT_%2B_RBAC-orange?style=flat-square" />
   <img src="https://img.shields.io/badge/status-production--ready-brightgreen?style=flat-square" />
 </p>
+
+---
+
+## 🎯 System Design & JD Mapping
+
+This project was specifically engineered to demonstrate robust backend and compliance capabilities:
+
+| JD Requirement | Implementation in this Project |
+|:---|:---|
+| **FastAPI / Backend API** | **API Layer**: Secure backend endpoints (`/api/export`, `/api/review`) handling business logic and strict validation. |
+| **Supabase / Postgres** | **Supabase RLS & Custom Tables**: Database-layer isolation through structured schemas (`matters`, `ai_sessions`). |
+| **Auth System** | **Supabase Auth**: Secure JWT token validation, session management, and `app_metadata` role extraction. |
+| **Audit Logs** | **BLOCKED_ACCESS Logging**: Immutable event tracing for unauthorized access attempts (`blocked_access_log`). |
+| **Data Integrity** | **RLS Policies + Cryptographic Hashes**: Append-only constraints (no UPDATE/DELETE) coupled with Web Crypto SHA-256 output hashes. |
+| **Secure Backend Design** | **Ethical Walls Concept**: Zero-trust architecture explicitly segregating client data via junction tables and RLS guardrails. |
 
 ---
 
