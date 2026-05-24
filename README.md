@@ -177,7 +177,7 @@ Raw DB Pull → Map Client UUID to "Client A", "Client B"
 |-----------|-------|------|---------|----------|
 | **Sarah** | sarah@brahmo.ai | `PARTNER` | ALL (Global Access) | Partner123! |
 | **Priya** | priya@brahmo.ai | `ASSOCIATE` | Matter 1, Matter 2 | Associate123! |
-| **Rahul** | rahul@brahmo.ai | `ASSOCIATE` | Matter 3 | Associate123! |
+| **Rahul** | rahul@brahmo.ai | `ASSOCIATE` | Matter 1, Matter 2, Matter 3 | Associate123! |
 | **Sonia** | sonia@brahmo.ai | `ASSOCIATE` | Matter 1 | Associate123! |
 
 *(Note: "Curious" associates attempting to view matters outside their scope trigger an immutable `no_permission` event in the Blocked Access Log).*

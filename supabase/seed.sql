@@ -43,7 +43,9 @@ INSERT INTO matter_permissions (id, user_id, matter_id, permission_level, grante
   ('f1111111-1111-1111-1111-111111111111'::uuid, '686b9b22-572f-426d-9a61-9877df2b275e'::uuid, 'e1111111-1111-1111-1111-111111111111'::uuid, 'read', NOW(), 'd734601d-9dac-4c80-a77b-1b5ce97ee985'::uuid),
   ('f2222222-2222-2222-2222-222222222222'::uuid, '686b9b22-572f-426d-9a61-9877df2b275e'::uuid, 'e2222222-2222-2222-2222-222222222222'::uuid, 'read_write', NOW(), 'd734601d-9dac-4c80-a77b-1b5ce97ee985'::uuid),
   
-  -- Rahul: Matter 3 only
+  -- Rahul: Matters 1, 2, and 3
+  ('f3333333-1111-1111-1111-111111111111'::uuid, '28ecf025-7f2d-48e5-b28b-09e9676d110d'::uuid, 'e1111111-1111-1111-1111-111111111111'::uuid, 'read', NOW(), 'd734601d-9dac-4c80-a77b-1b5ce97ee985'::uuid),
+  ('f3333333-2222-2222-2222-222222222222'::uuid, '28ecf025-7f2d-48e5-b28b-09e9676d110d'::uuid, 'e2222222-2222-2222-2222-222222222222'::uuid, 'read', NOW(), 'd734601d-9dac-4c80-a77b-1b5ce97ee985'::uuid),
   ('f3333333-3333-3333-3333-333333333333'::uuid, '28ecf025-7f2d-48e5-b28b-09e9676d110d'::uuid, 'e3333333-3333-3333-3333-333333333333'::uuid, 'read', NOW(), 'd734601d-9dac-4c80-a77b-1b5ce97ee985'::uuid),
   
   -- Sonia: Matter 1 only
