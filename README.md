@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/logo.png" alt="BRAHMO Logo" width="120" />
+  <img src="images/IMG_logo.png" alt="BRAHMO Logo" width="120" />
 </p>
 
 <h1 align="center">⚖️ BRAHMO Compliance Engine</h1>
