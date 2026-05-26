@@ -9,6 +9,12 @@
 </p>
 
 <p align="center">
+  <a href="https://www.loom.com/share/920c9f3f4083463b8042bba19847f101" target="_blank">
+    <strong>🎬 Watch the Video Walkthrough on Loom</strong>
+  </a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Next.js-14-000000?style=for-the-badge&logo=next.js&logoColor=white" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
@@ -175,7 +181,7 @@ Raw DB Pull → Map Client UUID to "Client A", "Client B"
 
 | Character | Email | Role | Accessible Matters | Password |
 |-----------|-------|------|---------|----------|
-| **Sarah** | sarah@brahmo.ai | `PARTNER` | ALL (Global Access) | Partner123! |
+| **Sarah** | partner@brahmo.ai | `PARTNER` | ALL (Global Access) | Partner123! |
 | **Priya** | priya@brahmo.ai | `ASSOCIATE` | Matter 1, Matter 2 | Associate123! |
 | **Rahul** | rahul@brahmo.ai | `ASSOCIATE` | Matter 3 | Associate123! |
 | **Sonia** | sonia@brahmo.ai | `ASSOCIATE` | Matter 1 | Associate123! |
