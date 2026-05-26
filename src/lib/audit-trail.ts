@@ -1,4 +1,5 @@
-import { supabaseBrowser, supabaseServer } from './supabase';
+import { supabaseBrowser } from './supabase';
+import { supabaseServer } from './supabaseServer';
 import { AISession } from './types';
 
 /**

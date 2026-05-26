@@ -77,45 +77,7 @@ export const supabaseBrowser = (() => {
   return client;
 })();
 
-// ============================================================
-// SERVER CLIENT (BACKEND ONLY - SAFE)
-// ============================================================
-
-/**
- * Server-side Supabase client with service role key.
- * 
- * USAGE:
- * - API routes only (never expose to browser)
- * - Server components that need full database access
- * - Operations requiring bypass of RLS policies
- * 
- * NOT CACHED:
- * - Each API route gets a fresh instance (stateless)
- * - RLS context is request-scoped, not global
- */
-export const supabaseServer = (() => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  // Service role key warning only in server environment
-  if (typeof window === 'undefined' && !supabaseServiceRoleKey) {
-    console.warn(
-      '[BRAHMO WARNING] SUPABASE_SERVICE_ROLE_KEY not set. Server operations will fail if used.'
-    );
-  }
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-      '[BRAHMO CRITICAL] Supabase environment variables are missing'
-    );
-  }
-
-  return createClient(
-    supabaseUrl,
-    supabaseServiceRoleKey || supabaseAnonKey
-  );
-})();
+// Server client is now defined in server-only file src/lib/supabaseServer.ts to prevent build-time env var stripping
 
 // ============================================================
 // INITIALIZATION HELPER

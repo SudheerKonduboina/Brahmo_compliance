@@ -1,4 +1,4 @@
-import { supabaseServer } from './supabase';
+import { supabaseServer } from './supabaseServer';
 import { anonymizeClientName } from './hash-chain';
 import { ComplianceExportRow } from './types';
 

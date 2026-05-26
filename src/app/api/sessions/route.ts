@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabaseServer';
 import { startAISession, endAISession } from '@/lib/audit-trail';
 import { computeOutputHash } from '@/lib/hash-chain';
 

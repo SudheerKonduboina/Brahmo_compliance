@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { supabaseBrowser } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 import { AlertCircle, Shield } from 'lucide-react';
 
 interface BlockedAccess {
@@ -10,9 +10,16 @@ interface BlockedAccess {
   attempted_matter_id: string;
   reason: string;
   created_at: string;
+  users?: {
+    name: string;
+  } | null;
+  matters?: {
+    matter_name: string;
+  } | null;
 }
 
 export function BlockedAccessPanel() {
+  const { session, authInitialized } = useAuth();
   const [blockedAccess, setBlockedAccess] = useState<BlockedAccess[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +31,9 @@ export function BlockedAccessPanel() {
   console.log(`[BLOCKED_ACCESS_PANEL] Render #${renderCountRef.current}, isLoading=${isLoading}, blockedAccess.length=${blockedAccess.length}`);
 
   useEffect(() => {
+    if (!authInitialized) {
+      return;
+    }
     if (fetchStartedRef.current) {
       console.log('[BLOCKED_ACCESS_PANEL] Fetch already started, skipping');
       return;
@@ -40,16 +50,25 @@ export function BlockedAccessPanel() {
           setTimeout(() => reject(new Error('Blocked access fetch timeout')), 8000);
         });
 
-        const { data, error: fetchError } = await Promise.race([
-          supabaseBrowser
-            .from('blocked_access_log')
-            .select('event_id, user_id, attempted_matter_id, reason, created_at')
-            .order('created_at', { ascending: false })
-            .limit(50),
+        const token = session?.access_token;
+        const apiPromise = fetch('/api/blocked-access', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          }
+        }).then(async (res) => {
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Failed to fetch logs');
+          }
+          return res.json();
+        });
+
+        const data = await Promise.race([
+          apiPromise,
           timeoutPromise
         ]) as any;
-
-        if (fetchError) throw fetchError;
 
         if (mounted) {
           console.log('[BLOCKED_ACCESS_PANEL] Fetch completed, data length:', data?.length || 0);
@@ -76,7 +95,7 @@ export function BlockedAccessPanel() {
       fetchStartedRef.current = false;
       mountedRef.current = false;
     };
-  }, []);
+  }, [authInitialized, session]);
 
   return (
     <div className="space-y-4">
@@ -169,10 +188,24 @@ export function BlockedAccessPanel() {
                         {new Date(event.created_at).toLocaleString()}
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm font-mono text-slate-600">{event.user_id.substring(0, 8)}...</p>
+                        <div>
+                          <p className="text-sm font-semibold text-slate-900">
+                            {event.users?.name || 'Unknown User'}
+                          </p>
+                          <p className="text-xs font-mono text-slate-500 mt-0.5">
+                            {event.user_id.substring(0, 8)}...
+                          </p>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
-                        <p className="text-sm font-mono text-slate-600">{event.attempted_matter_id.substring(0, 8)}...</p>
+                        <div>
+                          <p className="text-sm font-medium text-slate-700">
+                            {event.matters?.matter_name || 'Unknown Matter'}
+                          </p>
+                          <p className="text-xs font-mono text-slate-500 mt-0.5">
+                            {event.attempted_matter_id.substring(0, 8)}...
+                          </p>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">

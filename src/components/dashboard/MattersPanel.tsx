@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase';
 import { AlertCircle, FileText } from 'lucide-react';
 
@@ -14,6 +15,7 @@ interface Matter {
 }
 
 export function MattersPanel() {
+  const router = useRouter();
   const [matters, setMatters] = useState<Matter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -139,7 +141,11 @@ export function MattersPanel() {
               </thead>
               <tbody className="divide-y divide-slate-200">
                 {matters.map((matter) => (
-                  <tr key={matter.id} className="hover:bg-slate-50 transition">
+                  <tr
+                    key={matter.id}
+                    onClick={() => router.push(`/dashboard/matters/${matter.id}`)}
+                    className="hover:bg-slate-50 transition cursor-pointer"
+                  >
                     <td className="px-6 py-4">
                       <div>
                         <p className="font-medium text-slate-900">{matter.matter_name}</p>

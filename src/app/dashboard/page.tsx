@@ -1,22 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import { supabaseBrowser } from '@/lib/supabase';
-import { DashboardNav } from '@/components/dashboard/DashboardNav';
 import { MetricsOverview } from '@/components/dashboard/MetricsOverview';
-import { MattersPanel } from '@/components/dashboard/MattersPanel';
-import { SessionsPanel } from '@/components/dashboard/SessionsPanel';
-import { BlockedAccessPanel } from '@/components/dashboard/BlockedAccessPanel';
-import { ReviewQueuePanel } from '@/components/dashboard/ReviewQueuePanel';
-import { ComplianceExportPanel } from '@/components/dashboard/ComplianceExportPanel';
-import { AuditTrailPanel } from '@/components/dashboard/AuditTrailPanel';
-
-type TabType = 'overview' | 'matters' | 'sessions' | 'blocked' | 'reviews' | 'export' | 'audit';
 
 export default function DashboardPage() {
-  const { user, profile } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [stats, setStats] = useState({
     totalSessions: 0,
     reviewed: 0,
@@ -26,10 +14,9 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const fetchStartedRef = useRef(false);
   const renderCountRef = useRef(0);
-  const isPartner = profile?.role === 'partner' || user?.app_metadata?.role === 'partner';
 
   renderCountRef.current++;
-  console.log(`[DASHBOARD_PAGE] Render #${renderCountRef.current}, activeTab=${activeTab}, user=${user ? 'exists' : 'null'}`);
+  console.log(`[DASHBOARD_PAGE] Render #${renderCountRef.current}`);
 
   useEffect(() => {
     if (fetchStartedRef.current) {
@@ -126,76 +113,18 @@ export default function DashboardPage() {
     };
   }, []);
 
-  return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Navigation */}
-      <DashboardNav profile={profile} />
-
-      {/* Main content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Loading indicator for stats only */}
-        {isLoading && (
-          <div className="flex items-center justify-center py-8">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 mb-2 animate-pulse">
-                <div className="w-4 h-4 border-2 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
-              </div>
-              <p className="text-sm text-slate-600">Loading stats...</p>
-            </div>
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 mb-2 animate-pulse">
+            <div className="w-4 h-4 border-2 border-emerald-200 border-t-emerald-500 rounded-full animate-spin" />
           </div>
-        )}
-
-        {/* Tabs */}
-        <div className="flex gap-1 mb-8 border-b border-slate-200 overflow-x-auto">
-          {[
-            { id: 'overview', label: 'Overview', icon: '📊' },
-            { id: 'matters', label: 'Matters', icon: '📋' },
-            { id: 'sessions', label: 'AI Sessions', icon: '🤖' },
-            ...(isPartner ? [
-              { id: 'blocked', label: 'Blocked Access', icon: '🚫' },
-              { id: 'reviews', label: 'Review Queue', icon: '✓' },
-              { id: 'export', label: 'Export', icon: '📥' },
-              { id: 'audit', label: 'Audit Trail', icon: '🕐' }
-            ] : []),
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as TabType)}
-              className={`px-4 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition ${
-                activeTab === tab.id
-                  ? 'border-emerald-500 text-emerald-600'
-                  : 'border-transparent text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span className="mr-2">{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
+          <p className="text-sm text-slate-600">Loading stats...</p>
         </div>
+      </div>
+    );
+  }
 
-        {/* Content panels */}
-        {activeTab === 'overview' && (
-          <MetricsOverview stats={stats} />
-        )}
-        {activeTab === 'matters' && (
-          <MattersPanel />
-        )}
-        {activeTab === 'sessions' && (
-          <SessionsPanel />
-        )}
-        {activeTab === 'blocked' && isPartner && (
-          <BlockedAccessPanel />
-        )}
-        {activeTab === 'reviews' && isPartner && (
-          <ReviewQueuePanel />
-        )}
-        {activeTab === 'export' && isPartner && (
-          <ComplianceExportPanel />
-        )}
-        {activeTab === 'audit' && isPartner && (
-          <AuditTrailPanel />
-        )}
-      </main>
-    </div>
-  );
+  return <MetricsOverview stats={stats} />;
 }

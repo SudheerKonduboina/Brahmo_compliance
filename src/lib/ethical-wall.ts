@@ -1,4 +1,5 @@
-import { supabaseBrowser, supabaseServer } from './supabase';
+import { supabaseBrowser } from './supabase';
+import { supabaseServer } from './supabaseServer';
 import { AccessCheckResponse, Matter, AISession } from './types';
 
 /**
@@ -108,7 +109,7 @@ export const logBlockedAccess = async (
 
     // Compute current hash using hash chain
     const { computeBlockedAccessHash } = await import('./hash-chain');
-    const currentHash = computeBlockedAccessHash(
+    const currentHash = await computeBlockedAccessHash(
       previousHash,
       userId,
       matterId,
